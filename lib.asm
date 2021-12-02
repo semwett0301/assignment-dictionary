@@ -1,9 +1,21 @@
 section .text
 
+global exit
+global string_length
+global print_string
+global print_char
+global print_newline
+global print_uint
+global print_int
+global string_equals
+global read_char
+global read_word
+global parse_uint
+global parse_int
+global string_copy
 
 ; Принимает код возврата и завершает текущий процесс
 exit:
-    xor rax, rax
     mov rax, 60
     xor rdi, rdi
     syscall
@@ -97,7 +109,7 @@ string_equals:
     ; выбрал регистры, потому что они не могут содержать переданные переменные по соглашению
     mov r10b, byte[rdi + rcx]
     mov r11b, byte[rsi + rcx] ; выбираем текущий символ в каждой строке
-    cmp r10, r11
+    cmp r10b, r11b
     jne .not_equals ; сравниваем символы
 
     cmp r10b, 0
@@ -269,3 +281,4 @@ string_copy:
 .length_less_then_string:
     xor rax, rax
     ret
+
