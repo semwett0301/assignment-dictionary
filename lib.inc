@@ -11,3 +11,4 @@ extern read_word
 extern parse_uint
 extern parse_int
 extern string_copy
+extern print_error

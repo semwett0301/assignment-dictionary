@@ -13,11 +13,14 @@ global read_word
 global parse_uint
 global parse_int
 global string_copy
+global print_error
+
+%define stdout 1
+%define stderr 2
 
 ; Принимает код возврата и завершает текущий процесс
 exit:
     mov rax, 60
-    xor rdi, rdi
     syscall
 
 ; Принимает указатель на нуль-терминированную строку, возвращает её длину
@@ -37,7 +40,7 @@ print_string:
     call string_length ; не сохраняем никакие caller-saved регистры, потому что они не участвуют в дальнейшем
     mov rdx, rax ; количество символов
     mov rax, 1 ; код системного вызова "write"
-    mov rdi, 1
+    mov rdi, stdout
     syscall
     ret
 
@@ -46,7 +49,7 @@ print_char:
     push rdi
     mov rsi, rsp
     mov rax, 1
-    mov rdi, 1
+    mov rdi, stdout
     mov rdx, 1
     syscall
     pop rdi
@@ -282,3 +285,16 @@ string_copy:
     xor rax, rax
     ret
 
+; Принимает указатель на нуль-терминированную строку
+; Выводит ее в stderr
+print_error:
+    push rdi
+    call string_length
+    pop rdi
+
+    mov rsi, rdi
+    mov rdx, rax
+    mov rax, 1
+    mov rdi, stderr
+    syscall
+    ret

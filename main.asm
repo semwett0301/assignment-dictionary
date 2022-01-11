@@ -1,22 +1,25 @@
 %include "lib.inc"
 %include "dict.inc"
-%include "colon.inc"
+%include "words.inc"
+
+%define BUFFER_SIZE 256
 
 global _start
 
 section .rodata
-%include "words.inc"
 long_error: db "The key is too long", 0
 found_error: db "No data was found for this key", 0
+new_line_error: db 0xA, 0
 
-section .data
-buffer: times 256 db 0
 
 section .text
 _start:
+    ; Откладываем буфер
+    sub rsp, 256
+
     ; Читаем искомый ключ
-    mov rdi, buffer
-    mov rsi, 256
+    mov rdi, rsp
+    mov rsi, BUFFER_SIZE
     call read_word
 
     ; Проверяем ошибку длины ключа
@@ -45,29 +48,26 @@ _start:
     inc rdi
     call print_string
     call print_newline
-    call exit
+    xor rdi, rdi
+    call .exit_from_search
 .long_error:
     mov rdi, long_error
     call print_error
-    call print_newline
-    call exit
+
+    mov rdi, new_line_error
+    call print_error
+
+    mov rdi, 1
+    call .exit_from_search
 .found_error:
     mov rdi, found_error
     call print_error
-    call print_newline
+
+    mov rdi, new_line_error
+    call print_error
+
+    mov rdi, 1
+    call .exit_from_search
+.exit_from_search:
+    add rsp, 256
     call exit
-
-
-; Принимает указатель на нуль-терминированную строку
-; Выводит ее в stderr
-print_error:
-    push rdi
-    call string_length
-    pop rdi
-
-    mov rsi, rdi
-    mov rdx, rax
-    mov rax, 1
-    mov rdi, 2
-    syscall
-    ret

@@ -2,15 +2,16 @@
     %ifstr %1
         %ifid %2
             %ifdef l_label
-                %2: dq l_label
+                %%some_label: dq l_label
             %else
-                %2: dq 0
+                %%some_label: dq 0
             %endif
-            %define l_label %2
+            db %1, 0
+            %2:
+            %define l_label %%some_label
         %else
             %error "The second parameter is not a label"
         %endif
-        db %1, 0
     %else
         %error "The first parameter is not a string"
     %endif

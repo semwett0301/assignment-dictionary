@@ -3,6 +3,9 @@ ASM=nasm
 AFLAGS=-felf64 -o
 LD = ld -o
 
+main: lib.o dict.o main.o
+	$(LD) $@ $^
+
 lib.o: lib.asm
 	$(ASM) $(AFLAGS) $@ $<
 
@@ -12,8 +15,6 @@ dict.o: dict.asm
 main.o: main.asm colon.inc words.inc
 	$(ASM) $(AFLAGS) $@ $<
 
-main: lib.o dict.o main.o
-	$(LD) $@ $^
 
 .PHONY: clean
 clean:

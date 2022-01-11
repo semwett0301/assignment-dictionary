@@ -1,3 +1,6 @@
+%include "colon.inc"
+
+section .data
 colon "third_value", third_value
 db "dungeon master", 0
 
